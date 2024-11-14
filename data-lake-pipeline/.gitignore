@@ -1,0 +1,65 @@
+# Python bytecode files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment directories
+venv/
+env/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Python distribution files
+*.egg
+*.egg-info
+dist/
+build/
+eggs/
+
+# Logs
+logs/
+*.log
+
+# Spark temporary directories
+spark-warehouse/
+*.parquet
+
+# Data directories (raw, silver, gold data)
+data/raw/
+data/silver/
+data/gold/
+
+# Docker
+docker-compose.override.yml
+*.env
+Dockerfile
+.docker/
+.dockerignore
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Coverage reports
+coverage/
+*.coverage
+
+# Pyspark
+*.hdfs
+*.dvc
+*.pyspark
+
+# Environment variables
+.env
+
+# Temporary files
+*.bak
+*.swp
+*.tmp

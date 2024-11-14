@@ -1,0 +1,120 @@
+version: '3.8'
+
+services:
+  # Airflow Web Server
+  airflow-webserver:
+    image: apache/airflow:2.5.0
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__WEB_SERVER__RBAC=True
+    ports:
+      - "8080:8080"
+    depends_on:
+      - airflow-postgres
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    networks:
+      - airflow-network
+
+  # Airflow Scheduler
+  airflow-scheduler:
+    image: apache/airflow:2.5.0
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__WEB_SERVER__RBAC=True
+    depends_on:
+      - airflow-webserver
+      - airflow-postgres
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    command: ["scheduler"]
+    networks:
+      - airflow-network
+
+  # Airflow Worker
+  airflow-worker:
+    image: apache/airflow:2.5.0
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__WEB_SERVER__RBAC=True
+    depends_on:
+      - airflow-scheduler
+      - airflow-webserver
+      - airflow-postgres
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    command: ["worker"]
+    networks:
+      - airflow-network
+
+  # Airflow Flower (for monitoring)
+  airflow-flower:
+    image: apache/airflow:2.5.0
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    command: ["flower"]
+    ports:
+      - "5555:5555"
+    depends_on:
+      - airflow-scheduler
+    networks:
+      - airflow-network
+
+  # PostgreSQL (for Airflow metadata)
+  airflow-postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - airflow-postgres-data:/var/lib/postgresql/data
+    networks:
+      - airflow-network
+
+  # Spark Master
+  spark-master:
+    image: bitnami/spark:3.2
+    environment:
+      - SPARK_MODE=master
+      - SPARK_MASTER_HOST=spark-master
+    ports:
+      - "7077:7077"  # Spark master port
+      - "8081:8081"  # Spark UI
+    networks:
+      - airflow-network
+
+  # Spark Worker
+  spark-worker:
+    image: bitnami/spark:3.2
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER=spark://spark-master:7077
+    networks:
+      - airflow-network
+
+  # PostgreSQL for Aggregated Data Storage (Optional, for storing the data)
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: breweries_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - airflow-network
+
+volumes:
+  airflow-postgres-data:
+  postgres-data:
+
+networks:
+  airflow-network:
+    driver: bridge

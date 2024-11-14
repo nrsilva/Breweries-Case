@@ -1,0 +1,43 @@
+# Configurations for the data pipeline project
+# This file contains all necessary configurations, like API settings and data storage paths
+
+# API Configuration
+api:
+  base_url: "https://api.openbrewerydb.org/breweries"
+  timeout: 30  # API timeout in seconds
+  retries: 3   # Number of retries in case of request failure
+  params:
+    page_size: 50  # Number of breweries to fetch per API call
+
+# Data Storage Paths
+data_paths:
+  raw_data: "data/raw"    # Path to store raw data (Bronze Layer)
+  silver_data: "data/silver"  # Path to store transformed data (Silver Layer)
+  gold_data: "data/gold"    # Path to store aggregated data (Gold Layer)
+
+# Spark Configuration
+spark:
+  master_url: "local[*]"   # Spark master URL (local with all available cores)
+  app_name: "BreweryDataPipeline"  # Spark application name
+  warehouse_dir: "/tmp/spark-warehouse"  # Directory for Spark SQL warehouse
+  spark_home: "/opt/spark"  # Path to Spark home directory
+
+# Logging Configuration
+logging:
+  level: "INFO"  # Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+  log_dir: "logs"  # Directory for log files
+  log_file: "pipeline.log"  # Log file name
+
+# Data Validation Settings (for ensuring data quality)
+validation:
+  check_nulls: true    # Whether to check for null values during data validation
+  min_breweries: 100  # Minimum number of breweries expected in the dataset
+  max_breweries: 1000  # Maximum number of breweries expected in the dataset
+
+# Retry and Error Handling Configuration
+retry:
+  max_retries: 3  # Max retries for failed steps in the pipeline
+  backoff_factor: 2  # Exponential backoff for retries (e.g., 1s, 2s, 4s, etc.)
+  delay: 5  # Delay in seconds between retries
+
+

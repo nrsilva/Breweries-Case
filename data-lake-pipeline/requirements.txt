@@ -1,0 +1,25 @@
+# Core dependencies for Airflow
+apache-airflow==2.7.1
+apache-airflow-providers-http==2.7.0  # Provider for HTTP requests (used to interact with Open Brewery DB API)
+
+# Data processing and storage
+pyspark==3.4.0  # Apache Spark for distributed data processing
+pandas==1.5.3   # Pandas for data manipulation, if needed for additional processing
+pyarrow==11.0.0  # PyArrow for Parquet support in Spark
+
+# API requests
+requests==2.28.2  # For making HTTP requests to the Open Brewery DB API
+
+# Testing dependencies
+pytest==7.2.2  # Testing framework
+pytest-mock==3.10.0  # For mocking in tests
+
+# Utilities
+pyyaml==6.0  # For reading configuration files (config.yaml)
+numpy==1.23.5  # Dependency for PySpark, often used for data transformations
+
+# Docker dependencies (if using Docker)
+docker==6.0.0  # If you want to interact with Docker programmatically
+
+# For logging and monitoring (optional but recommended)
+loguru==0.6.0  # Logging library, useful for logging events in the pipeline
